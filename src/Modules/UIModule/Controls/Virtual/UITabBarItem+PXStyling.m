@@ -33,8 +33,10 @@
 #import "PXTextContentStyler.h"
 #import "PXStyleUtils.h"
 #import "PXStylingMacros.h"
+#import "PXUtils.h"
 #import "UIBarItem+PXStyling.h"
 #import "PXAttributedTextStyler.h"
+#import "PXGenericStyler.h"
 
 void PXForceLoadUITabBarItemPXStyling() {}
 
@@ -112,6 +114,26 @@ static NSDictionary *PSEUDOCLASS_MAP;
             [[PXTextContentStyler alloc] initWithCompletionBlock:^(UIBarButtonItem *view, PXTextContentStyler *styler, PXStylerContext *context) {
                 [view setTitle: context.text];
             }],
+
+            [[PXGenericStyler alloc] initWithHandlers: @{
+                                                         
+                                                         @"-ios-rendering-mode" : ^(PXDeclaration *declaration, PXStylerContext *context) {
+                
+                NSString *mode = [declaration.stringValue lowercaseString];
+                
+                if([mode isEqualToString:@"original"])
+                {
+                    [context setPropertyValue:@"original" forName:@"rendering-mode"];
+                }
+                else if([mode isEqualToString:@"template"])
+                {
+                    [context setPropertyValue:@"template" forName:@"rendering-mode"];
+                }
+                else
+                {
+                    [context setPropertyValue:@"automatic" forName:@"rendering-mode"];
+                }
+            }}],
         ];
     });
 
@@ -120,25 +142,43 @@ static NSDictionary *PSEUDOCLASS_MAP;
 
 - (void)updateStyleWithRuleSet:(PXRuleSet *)ruleSet context:(PXStylerContext *)context
 {
-    if([context.activeStateName isEqualToString:@"normal"])
+    if (context.usesImage)
     {
-        if (context.usesImage)
+        UIImage *icon = context.backgroundImage;
+        
+        if([PXUtils isIOS7OrGreater])
         {
-            [self setImage:context.backgroundImage];
+            NSString *renderingMode = [context propertyValueForName:@"rendering-mode"];
+            
+            if(renderingMode)
+            {
+                if([renderingMode isEqualToString:@"original"])
+                {
+                    icon = [icon imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+                }
+                else if([renderingMode isEqualToString:@"template"])
+                {
+                    icon = [icon imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+                }
+                else
+                {
+                    icon = [icon imageWithRenderingMode:UIImageRenderingModeAutomatic];
+                }
+            }
         }
-    }
-    else if([context.activeStateName isEqualToString:@"selected"])
-    {
-        if (context.usesImage)
+        
+        
+        if([context.activeStateName isEqualToString:@"normal"])
         {
-            self.selectedImage = context.backgroundImage;
+            [self setImage:icon];
         }
-    }
-    else if([context.activeStateName isEqualToString:@"unselected"])
-    {
-        if (context.usesImage)
+        else if([context.activeStateName isEqualToString:@"selected"])
         {
-            self.image = context.backgroundImage;
+            self.selectedImage = icon;
+        }
+        else if([context.activeStateName isEqualToString:@"unselected"])
+        {
+            self.image = icon;
         }
     }
 }
