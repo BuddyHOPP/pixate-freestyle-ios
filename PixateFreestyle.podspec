@@ -28,8 +28,8 @@ Pod::Spec.new do |s|
   s.platform     = :ios, '5.0'
   s.source       = { :http => "https://github.com/BuddyHOPP/pixate-freestyle-ios/releases/download/v#{s.version}/PixateFreestyle.framework.zip" }
   s.source_files = 'PixateFreestyle.framework/Versions/A/Headers/*.h'
-  s.preserve_paths = 'PixateFreestyle.framework'
   s.frameworks = 'CoreText', 'QuartzCore', 'UIKit', 'CoreGraphics', 'PixateFreestyle'
+  s.vendored_frameworks = 'PixateFreestyle.framework'
   s.xcconfig = { 'FRAMEWORK_SEARCH_PATHS' => '"$(PODS_ROOT)/PixateFreestyle"' }
   #s.prepare_command = 'open "http://www.pixate.com/docs/framework/ios/latest/getting-started/index.html#app_setup" || true'
 end
