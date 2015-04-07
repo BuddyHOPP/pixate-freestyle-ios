@@ -38,6 +38,9 @@
 #import "PXAnimationStyler.h"
 #import "PXTextShadowStyler.h"
 #import "PXUtils.h"
+#import "PXFontStyler.h"
+#import "PXBorderStyler.h"
+#import "PXShapeStyler.h"
 
 @implementation PXUISearchBar
 
@@ -62,7 +65,7 @@
             [[PXOpacityStyler alloc] initWithCompletionBlock:^(PXUISearchBar *view, PXOpacityStyler *styler, PXStylerContext *context) {
                 [view px_setTranslucent:(context.opacity < 1.0) ? YES : NO];
             }],
-
+            
             PXFillStyler.sharedInstance,
             PXBoxShadowStyler.sharedInstance,
 
@@ -85,6 +88,19 @@
                 [view px_setText: context.text];
             }],
 
+            
+            [[PXFontStyler alloc] initWithCompletionBlock:^(id control, PXFontStyler *styler, PXStylerContext *context) {
+                UIFont *font = context.font;
+                
+                if (font)
+                {
+                    PXUISearchBar *view = (PXUISearchBar *)context.styleable;
+                    UITextField* inputView = (UITextField*)[self findInputViewInSearchBar:view];
+                    [inputView setFont: font];
+                }
+                
+            }],
+            
             [[PXGenericStyler alloc] initWithHandlers: @{
 
             @"-ios-tint-color" : ^(PXDeclaration *declaration, PXStylerContext *context) {
@@ -98,7 +114,42 @@
                 UIColor *color = declaration.colorValue;
                 [view px_setTintColor:color];
              },
+
+            @"input-backgorundColor" : ^(PXDeclaration *declaration, PXStylerContext *context) {
+                PXUISearchBar *view = (PXUISearchBar *)context.styleable;
+                UIColor *color = declaration.colorValue;
+                UIView* inputView = [self findInputViewInSearchBar:view];
+                inputView.backgroundColor = color;
                 
+            },
+
+            @"separator-top-color" : ^(PXDeclaration *declaration, PXStylerContext *context) {
+                PXUISearchBar *view = (PXUISearchBar *)context.styleable;
+                UIColor *color = declaration.colorValue;
+                
+                CALayer* layer = CALayer.layer;
+                layer.backgroundColor = color.CGColor;
+                [view.layer addSublayer:layer];
+                layer.frame = CGRectMake(0, 0, CGRectGetWidth(view.bounds), 1);
+            },
+
+            @"separator-bottom-color" : ^(PXDeclaration *declaration, PXStylerContext *context) {
+                PXUISearchBar *view = (PXUISearchBar *)context.styleable;
+                UIColor *color = declaration.colorValue;
+                
+                CALayer* layer = CALayer.layer;
+                layer.backgroundColor = color.CGColor;
+                [view.layer addSublayer:layer];
+                layer.frame = CGRectMake(0, CGRectGetHeight(view.bounds) - 1, CGRectGetWidth(view.bounds), 1);
+            },
+
+            @"input-corner-radius" : ^(PXDeclaration *declaration, PXStylerContext *context) {
+                PXUISearchBar *view = (PXUISearchBar *)context.styleable;
+                CGFloat radius = declaration.floatValue;
+                UIView* inputView = [self findInputViewInSearchBar:view];
+                inputView.layer.cornerRadius = radius;
+            },
+
              @"bar-style" : ^(PXDeclaration *declaration, PXStylerContext *context) {
                 PXUISearchBar *view = (PXUISearchBar *)context.styleable;
                 NSString *style = [declaration.stringValue lowercaseString];
@@ -158,6 +209,22 @@
             [self px_setTintColor: [UIColor colorWithPatternImage:context.backgroundImage]];
         }
     }
+}
+
+- (UIView*)findInputViewInSearchBar:(UISearchBar*) searchBar {
+    UIView* resultView = nil;
+    UIView* coreView = (UIView*)searchBar.subviews[0];
+    if (coreView != nil) {
+        for (UIView* view in coreView.subviews) {
+            if ([view isKindOfClass:[UITextField class]])  {
+                resultView = view;
+                break;
+            }
+        }
+
+    }
+    
+    return resultView;
 }
 
 PX_PXWRAP_1(setText, text);
