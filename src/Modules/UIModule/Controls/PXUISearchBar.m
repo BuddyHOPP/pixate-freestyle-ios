@@ -38,6 +38,7 @@
 #import "PXAnimationStyler.h"
 #import "PXTextShadowStyler.h"
 #import "PXUtils.h"
+#import "PXFontStyler.h"
 
 @implementation PXUISearchBar
 
@@ -85,6 +86,19 @@
                 [view px_setText: context.text];
             }],
 
+            
+            [[PXFontStyler alloc] initWithCompletionBlock:^(id control, PXFontStyler *styler, PXStylerContext *context) {
+                UIFont *font = context.font;
+                
+                if (font)
+                {
+                    PXUISearchBar *view = (PXUISearchBar *)context.styleable;
+                    UITextField* inputView = (UITextField*)[self findInputViewInSearchBar:view];
+                    [inputView setFont: font];
+                }
+                
+            }],
+            
             [[PXGenericStyler alloc] initWithHandlers: @{
 
             @"-ios-tint-color" : ^(PXDeclaration *declaration, PXStylerContext *context) {
