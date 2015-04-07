@@ -39,6 +39,8 @@
 #import "PXTextShadowStyler.h"
 #import "PXUtils.h"
 #import "PXFontStyler.h"
+#import "PXBorderStyler.h"
+#import "PXShapeStyler.h"
 
 @implementation PXUISearchBar
 
@@ -63,7 +65,7 @@
             [[PXOpacityStyler alloc] initWithCompletionBlock:^(PXUISearchBar *view, PXOpacityStyler *styler, PXStylerContext *context) {
                 [view px_setTranslucent:(context.opacity < 1.0) ? YES : NO];
             }],
-
+            
             PXFillStyler.sharedInstance,
             PXBoxShadowStyler.sharedInstance,
 
@@ -119,6 +121,26 @@
                 UIView* inputView = [self findInputViewInSearchBar:view];
                 inputView.backgroundColor = color;
                 
+            },
+
+            @"separator-top-color" : ^(PXDeclaration *declaration, PXStylerContext *context) {
+                PXUISearchBar *view = (PXUISearchBar *)context.styleable;
+                UIColor *color = declaration.colorValue;
+                
+                CALayer* layer = CALayer.layer;
+                layer.backgroundColor = color.CGColor;
+                [view.layer addSublayer:layer];
+                layer.frame = CGRectMake(0, 0, CGRectGetWidth(view.bounds), 1);
+            },
+
+            @"separator-bottom-color" : ^(PXDeclaration *declaration, PXStylerContext *context) {
+                PXUISearchBar *view = (PXUISearchBar *)context.styleable;
+                UIColor *color = declaration.colorValue;
+                
+                CALayer* layer = CALayer.layer;
+                layer.backgroundColor = color.CGColor;
+                [view.layer addSublayer:layer];
+                layer.frame = CGRectMake(0, CGRectGetHeight(view.bounds) - 1, CGRectGetWidth(view.bounds), 1);
             },
 
             @"input-corner-radius" : ^(PXDeclaration *declaration, PXStylerContext *context) {
