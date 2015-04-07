@@ -98,7 +98,22 @@
                 UIColor *color = declaration.colorValue;
                 [view px_setTintColor:color];
              },
+
+            @"input-backgorundColor" : ^(PXDeclaration *declaration, PXStylerContext *context) {
+                PXUISearchBar *view = (PXUISearchBar *)context.styleable;
+                UIColor *color = declaration.colorValue;
+                UIView* inputView = [self findInputViewInSearchBar:view];
+                inputView.backgroundColor = color;
                 
+            },
+
+            @"input-corner-radius" : ^(PXDeclaration *declaration, PXStylerContext *context) {
+                PXUISearchBar *view = (PXUISearchBar *)context.styleable;
+                CGFloat radius = declaration.floatValue;
+                UIView* inputView = [self findInputViewInSearchBar:view];
+                inputView.layer.cornerRadius = radius;
+            },
+
              @"bar-style" : ^(PXDeclaration *declaration, PXStylerContext *context) {
                 PXUISearchBar *view = (PXUISearchBar *)context.styleable;
                 NSString *style = [declaration.stringValue lowercaseString];
@@ -158,6 +173,22 @@
             [self px_setTintColor: [UIColor colorWithPatternImage:context.backgroundImage]];
         }
     }
+}
+
+- (UIView*)findInputViewInSearchBar:(UISearchBar*) searchBar {
+    UIView* resultView = nil;
+    UIView* coreView = (UIView*)searchBar.subviews[0];
+    if (coreView != nil) {
+        for (UIView* view in coreView.subviews) {
+            if ([view isKindOfClass:[UITextField class]])  {
+                resultView = view;
+                break;
+            }
+        }
+
+    }
+    
+    return resultView;
 }
 
 PX_PXWRAP_1(setText, text);

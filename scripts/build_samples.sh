@@ -71,7 +71,7 @@ function xcode_build_sample() {
 }
 
 for sampledir in `$PX_FREESTYLE_FIND_SAMPLES_CMD`; do
-  xcode_build_sample `basename $sampledir` "iphonesimulator7.1" "i386" "$BUILDCONFIGURATION"
+  xcode_build_sample `basename $sampledir` "iphonesimulator8.2" "i386" "$BUILDCONFIGURATION"
 done
 
 # -----------------------------------------------------------------------------
