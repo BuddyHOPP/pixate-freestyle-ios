@@ -93,13 +93,13 @@ table-view-cell:nth-child(even) { background-color: lightgray; }
 
 .custom_search-bar {
     background-color: white;
-    input-backgorundColor:green;
-    input-corner-radius: 12;
-    font-size: 18px;
-    font-family: "Open Sans";
-    border-width: 1px;
-    border-color: #84a254;
-    border-style: solid;
+}
+
+.custom_search-bar text-field {
+        background-color:green;
+        corner-radius: 12;
+        font-size: 28px;
+        font-family: "Open Sans";
 }
 
 /* SECOND TABLE STYLING */

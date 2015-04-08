@@ -41,6 +41,9 @@
 #import "PXFontStyler.h"
 #import "PXBorderStyler.h"
 #import "PXShapeStyler.h"
+#import "PXVirtualStyleableControl.h"
+static const char STYLE_CHILDREN;
+
 
 @implementation PXUISearchBar
 
@@ -50,6 +53,67 @@
         return;
     
     [UIView registerDynamicSubclass:self withElementName:@"search-bar"];
+}
+
+
+- (NSArray *)pxStyleChildren
+{
+    if (!objc_getAssociatedObject(self, &STYLE_CHILDREN))
+    {
+        __weak PXUISearchBar *weakSelf = self;
+        
+        //
+        // textLabel
+        //
+        PXVirtualStyleableControl* textField = [[PXVirtualStyleableControl alloc] initWithParent:self elementName:@"text-field" viewStyleUpdaterBlock:^(PXRuleSet *ruleSet, PXStylerContext *context) {
+            // nothing for now
+        }];
+        
+        textField.layer = [PXUISearchBar findInputViewInSearchBar:self].layer;
+        
+        textField.viewStylers = @[
+                  PXTransformStyler.sharedInstance,
+                  PXLayoutStyler.sharedInstance,
+                  PXOpacityStyler.sharedInstance,
+                  
+                  PXShapeStyler.sharedInstance,
+                  PXFillStyler.sharedInstance,
+                  
+                  [[PXFillStyler alloc] initWithCompletionBlock:^(id control, PXFillStyler *styler, PXStylerContext *context) {
+                      UIColor *backgroundColor = context.color;
+                      if (backgroundColor)
+                      {
+                          UITextField *view = (UITextField*)[PXUISearchBar findInputViewInSearchBar:weakSelf];
+                          [view setBackgroundColor:backgroundColor];
+                      }
+                      
+                  }],
+                  
+                  [[PXFontStyler alloc] initWithCompletionBlock:^(id control, PXFontStyler *styler, PXStylerContext *context) {
+                      UIFont *font = context.font;
+                      if (font)
+                      {
+                          UITextField *view = (UITextField*)[PXUISearchBar findInputViewInSearchBar:weakSelf];
+                          [view setFont:context.font];
+                      }
+                      
+                  }],
+                  
+                  [[PXGenericStyler alloc] initWithHandlers: @{
+                    @"corner-radius" : ^(PXDeclaration *declaration, PXStylerContext *context) {
+                      UITextField *inputView = (UITextField*)[PXUISearchBar findInputViewInSearchBar:weakSelf];
+                      CGFloat radius = declaration.floatValue;
+                      inputView.layer.cornerRadius = radius;
+                    }
+                       }],
+                  ];
+
+        NSArray *styleChildren = @[textField];
+        
+        objc_setAssociatedObject(self, &STYLE_CHILDREN, styleChildren, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    
+    return objc_getAssociatedObject(self, &STYLE_CHILDREN);
 }
 
 - (NSArray *)viewStylers
@@ -89,18 +153,6 @@
             }],
 
             
-            [[PXFontStyler alloc] initWithCompletionBlock:^(id control, PXFontStyler *styler, PXStylerContext *context) {
-                UIFont *font = context.font;
-                
-                if (font)
-                {
-                    PXUISearchBar *view = (PXUISearchBar *)context.styleable;
-                    UITextField* inputView = (UITextField*)[self findInputViewInSearchBar:view];
-                    [inputView setFont: font];
-                }
-                
-            }],
-            
             [[PXGenericStyler alloc] initWithHandlers: @{
 
             @"-ios-tint-color" : ^(PXDeclaration *declaration, PXStylerContext *context) {
@@ -114,14 +166,6 @@
                 UIColor *color = declaration.colorValue;
                 [view px_setTintColor:color];
              },
-
-            @"input-backgorundColor" : ^(PXDeclaration *declaration, PXStylerContext *context) {
-                PXUISearchBar *view = (PXUISearchBar *)context.styleable;
-                UIColor *color = declaration.colorValue;
-                UIView* inputView = [self findInputViewInSearchBar:view];
-                inputView.backgroundColor = color;
-                
-            },
 
             @"separator-top-color" : ^(PXDeclaration *declaration, PXStylerContext *context) {
                 PXUISearchBar *view = (PXUISearchBar *)context.styleable;
@@ -141,13 +185,6 @@
                 layer.backgroundColor = color.CGColor;
                 [view.layer addSublayer:layer];
                 layer.frame = CGRectMake(0, CGRectGetHeight(view.bounds) - 1, CGRectGetWidth(view.bounds), 1);
-            },
-
-            @"input-corner-radius" : ^(PXDeclaration *declaration, PXStylerContext *context) {
-                PXUISearchBar *view = (PXUISearchBar *)context.styleable;
-                CGFloat radius = declaration.floatValue;
-                UIView* inputView = [self findInputViewInSearchBar:view];
-                inputView.layer.cornerRadius = radius;
             },
 
              @"bar-style" : ^(PXDeclaration *declaration, PXStylerContext *context) {
@@ -211,7 +248,7 @@
     }
 }
 
-- (UIView*)findInputViewInSearchBar:(UISearchBar*) searchBar {
++ (UIView*)findInputViewInSearchBar:(UISearchBar*) searchBar {
     UIView* resultView = nil;
     UIView* coreView = (UIView*)searchBar.subviews[0];
     if (coreView != nil) {
