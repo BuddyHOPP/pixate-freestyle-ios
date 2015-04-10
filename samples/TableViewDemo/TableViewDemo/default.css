@@ -91,7 +91,16 @@ table-view-cell:nth-child(even) { background-color: lightgray; }
     }
 }
 
+.custom_search-bar {
+    background-color: white;
+}
 
+.custom_search-bar text-field {
+        background-color:green;
+        corner-radius: 12;
+        font-size: 28px;
+        font-family: "Open Sans";
+}
 
 /* SECOND TABLE STYLING */
 

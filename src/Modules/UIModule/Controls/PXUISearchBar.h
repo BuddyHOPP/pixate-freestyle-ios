@@ -39,6 +39,8 @@
  *  - PXBoxShadowStyler
  *  - PXTextShadowStyler
  *  - PXTextContentStyler
+ *  - input-backgorundColor: <paint>
+ *  - input-corner-radius
  *  - bar-style: default | black
  *  - PXAnimationStyler
  *  - color: <paint>
