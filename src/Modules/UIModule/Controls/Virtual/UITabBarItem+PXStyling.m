@@ -54,7 +54,7 @@ static NSDictionary *PSEUDOCLASS_MAP;
     
     PSEUDOCLASS_MAP = @{
         @"normal" : @(UIControlStateNormal),
-        @"selected" : @(UIControlStateHighlighted),
+        @"selected" : @(UIControlStateSelected),
         @"unselected" : @(UIControlStateNormal)
     };
 }
