@@ -7,6 +7,7 @@
 
 - (id)init
 {
+    [super init];
     _lock = [[NSCondition alloc] init];
     return self;
 }
