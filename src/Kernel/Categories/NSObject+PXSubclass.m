@@ -60,8 +60,7 @@ void PXForceLoadNSObjectPXSubclass() {}
 
     // 'self' is a Pixate class, so we're checking that the object passed in is not a Pixate class
 	if (![object isKindOfClass:[self superclass]]) {
-        //https://github.com/Pixate/pixate-freestyle-ios/issues/186
-        //		NSAssert(NO, @"Class %@ doesn't fit for subclassing.", [superClass description]);
+		NSAssert(NO, @"Class %@ doesn't fit for subclassing.", [superClass description]);
 		return;
 	}
 
@@ -116,8 +115,7 @@ void PXForceLoadNSObjectPXSubclass() {}
         // Check to make sure that the two classes (new and original) are the same size
         if (class_getInstanceSize(superClass) != class_getInstanceSize(newClass))
         {
-            //https://github.com/Pixate/pixate-freestyle-ios/issues/186
-//            NSAssert(NO, @"Class %@ doesn't fit for subclassing.", [superClass description]);
+            NSAssert(NO, @"Class %@ doesn't fit for subclassing.", [superClass description]);
             return;
         }
     }
@@ -131,11 +129,8 @@ void PXForceLoadNSObjectPXSubclass() {}
 
 static BOOL respondsToSelectorIMP(id self, SEL _cmd, SEL selector)
 {
-//https://github.com/Pixate/pixate-freestyle-ios/issues/186
-//    return ((BOOL)callSuper1v(self, [self pxClass], _cmd, selector))
-//			|| (class_getInstanceMethod(object_getClass(self), selector) != NULL);
-    return (class_getInstanceMethod(object_getClass(self), selector) != NULL);
-
+	return ((BOOL)callSuper1v(self, [self pxClass], _cmd, selector))
+			|| (class_getInstanceMethod(object_getClass(self), selector) != NULL);
 }
 
 @end
