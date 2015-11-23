@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "PixateFreestyle"
-  s.version      = "2.2.1"
+  s.version      = "2.1.4"
   s.summary      = "Style your iOS app with CSS, using 100% native code and no webviews."
   s.description  = <<-DESC
                    Pixate is an iOS framework that allows you to style your application using stylesheets and a CSS-like syntax. Pixate lets you build  beautiful applications with less code and more flexibility by using familiar CSS markup to style native controls and components. Free up your team to focus on creating amazing user experiences throughout the design and development cycle.
@@ -26,10 +26,26 @@ Pod::Spec.new do |s|
   }
   s.author       = { "Pixate" => "info@pixate.com" }
   s.platform     = :ios, '5.0'
-  s.source       = { :http => "https://github.com/BuddyHOPP/pixate-freestyle-ios/releases/download/v#{s.version}/PixateFreestyle.framework.zip" }
-  s.source_files = 'PixateFreestyle.framework/Versions/A/Headers/*.h'
-  s.frameworks = 'CoreText', 'QuartzCore', 'UIKit', 'CoreGraphics', 'PixateFreestyle'
-  s.vendored_frameworks = 'PixateFreestyle.framework'
-  s.xcconfig = { 'FRAMEWORK_SEARCH_PATHS' => '"$(PODS_ROOT)/PixateFreestyle"' }
+  s.source       = {
+        :git => "https://github.com/Pixate/pixate-freestyle-ios.git",
+        :tag => "2.1.4",
+        :submodules => true
+  }
+
+  s.default_subspec = 'All'
+  s.subspec 'All' do |ss|
+    ss.prefix_header_file = "src/pixate-freestyle-Prefix.pch"
+    ss.source_files = 'src/PixateFreestyle.{h,m}', "src/Version.h", 'src/Core/**/*.{h,m}', 'src/Modules/**/*.{h,m}', 'src/Kernel/Categories/*.{h,m}', 'src/Kernel/Utils/*.{h,c}', 'submodules/pixate-expression-machine/src/ExpressionMachine/**/*.{h,m,lm}'
+    ss.requires_arc = true
+    ss.dependency 'PixateFreestyle/MAFuture'
+  end
+
+  s.subspec 'MAFuture' do |ss|
+    ss.prefix_header_file = "src/pixate-freestyle-Prefix.pch"
+    ss.source_files = 'src/Kernel/Third-Party/MAFuture/*.{h,m}'
+    ss.requires_arc = false
+  end
+
+  s.frameworks = 'CoreText', 'QuartzCore', 'UIKit', 'CoreGraphics'
   #s.prepare_command = 'open "http://www.pixate.com/docs/framework/ios/latest/getting-started/index.html#app_setup" || true'
 end
