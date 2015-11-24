@@ -38,9 +38,11 @@
 - (void)tableView:(UITableView *)tableView willDisplayHeaderView:(UIView *)view forSection:(NSInteger)section
 {
     // Apparently we need to do this because at times, we get normal cells here.
-    if([UIView subclassIfNeeded:[PXUITableViewHeaderFooterView class] object:view] == YES)
-    {
-        view.styleMode = PXStylingNormal;
+    if ([view isKindOfClass:[UITableViewHeaderFooterView class]]) {
+        if([UIView subclassIfNeeded:[PXUITableViewHeaderFooterView class] object:(UITableViewHeaderFooterView*)view] == YES)
+        {
+            view.styleMode = PXStylingNormal;
+        }
     }
     
     [view updateStyles];
@@ -49,9 +51,11 @@
 - (void)tableView:(UITableView *)tableView willDisplayFooterView:(UIView *)view forSection:(NSInteger)section
 {
     // Apparently we need to do this because at times, we get normal cells here.
-    if([UIView subclassIfNeeded:[PXUITableViewHeaderFooterView class] object:view] == YES)
-    {
-        view.styleMode = PXStylingNormal;
+    if ([view isKindOfClass:[UITableViewHeaderFooterView class]]) {
+        if([UIView subclassIfNeeded:[PXUITableViewHeaderFooterView class] object:(UITableViewHeaderFooterView*)view] == YES)
+        {
+            view.styleMode = PXStylingNormal;
+        }
     }
     
     [view updateStyles];
