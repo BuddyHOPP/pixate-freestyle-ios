@@ -28,7 +28,7 @@ Pod::Spec.new do |s|
   s.platform     = :ios, '5.0'
   s.source       = {
         :git => "https://github.com/tispr/pixate-freestyle-ios.git",
-        :tag => "2.2.1",
+        :tag => "v2.2.1",
         :submodules => true
   }
 
