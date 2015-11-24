@@ -24,6 +24,8 @@ Pod::Spec.new do |s|
               limitations under the License.
              LICENSE
   }
+  
+  
   s.author       = { "Pixate" => "info@pixate.com" }
   s.platform     = :ios, '5.0'
   s.source       = {
